@@ -8,7 +8,7 @@ import {
   ticketStatusTypes
 } from '../../utils/constants';
 
-export async function getUsers(req, res) {
+export async function getUsers(req, res, next) {
   try {
     const query = {
       type: { [Op.ne]: userTypes.ADMIN }
@@ -28,13 +28,11 @@ export async function getUsers(req, res) {
     });
 
   } catch (error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }
 
-export async function getTickets(req, res) {
+export async function getTickets(req, res, next) {
   try {
     const query = {}
     const { status } = req.query;
@@ -52,13 +50,11 @@ export async function getTickets(req, res) {
       data: tickets
     });
   } catch (error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }
 
-export async function assignTicket(req, res) {
+export async function assignTicket(req, res, next) {
   try {
     const { ticketId } = req.params;
     const { agentId } = req.body;
@@ -108,13 +104,11 @@ export async function assignTicket(req, res) {
     });
 
   } catch (error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }
 
-export async function getReport(req, res) {
+export async function getReport(req, res, next) {
   try {
     const tickets = await Ticket.findAll({
       where: {
@@ -152,8 +146,6 @@ export async function getReport(req, res) {
     res.attachment('report.csv');
     res.status(200).send(data);
   } catch (error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
-  }   
+    next(error);
+  }
 }

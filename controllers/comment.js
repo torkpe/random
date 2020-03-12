@@ -1,6 +1,6 @@
 import { Comment } from '../models';
 
-export async function createComment(req, res) {
+export async function createComment(req, res, next) {
   try {
     await Comment.create(req.sanitizedBody);
 
@@ -9,8 +9,6 @@ export async function createComment(req, res) {
     });
 
   } catch (error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }

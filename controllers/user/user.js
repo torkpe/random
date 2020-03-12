@@ -1,10 +1,12 @@
 import { Ticket } from '../../models';
 import {
   queryRelationship,
-  ticketStatusTypes
 } from '../../utils/constants';
+import {
+  EntryExistError,
+} from '../../utils/errors';
 
-export async function getTickets(req, res) {
+export async function getTickets(req, res, next) {
   try {
     const query = {
       createdBy: req.user.id
@@ -26,13 +28,11 @@ export async function getTickets(req, res) {
     });
 
   } catch (error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }
 
-export async function createTicket(req, res) {
+export async function createTicket(req, res, next) {
   try {
     const ticket = await Ticket.findOne({
       where: {
@@ -42,9 +42,7 @@ export async function createTicket(req, res) {
     });
 
     if (ticket) {
-      return res.status(409).send({
-        error: 'You currently have an unresolved ticket with this title.'
-      });
+      throw new EntryExistError('You currently have an unresolved ticket with this title.');
     }
 
     await Ticket.create(req.sanitizedBody);
@@ -54,9 +52,7 @@ export async function createTicket(req, res) {
     });
 
   } catch (error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }
 

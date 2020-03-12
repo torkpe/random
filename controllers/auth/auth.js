@@ -4,8 +4,13 @@ import {
   compareSync
 } from '../../utils/auth';
 import { userTypes } from '../../utils/constants';
+import {
+  EntryExistError,
+  EntryNotFound,
+  AuthenticationError
+} from '../../utils/errors';
 
-export async function createUser(req, res) {
+export async function createUser(req, res, next) {
   try {
     const createdUser = await User.findOrCreate({
       where: {
@@ -16,36 +21,30 @@ export async function createUser(req, res) {
       }
     });
 
-    if (createdUser[1]) {
-      const user = createdUser[0].dataValues;
-      let token;
-      const isUser = user.type === userTypes.USER;
+    if (!createdUser[1]) {
+      throw new EntryExistError('An account already exists with this email')
+    }
+    const user = createdUser[0].dataValues;
+    let token;
+    const isUser = user.type === userTypes.USER;
 
-      if (isUser) {
-        token = createToken({
-          id: user.id,
-          type: user.type
-        });
-      }
-
-      return res.status(201).send({
-        message: isUser ? 'Succesfully created user' : 'Succesfully created agent',
-        token
+    if (isUser) {
+      token = createToken({
+        id: user.id,
+        type: user.type
       });
     }
 
-    return res.status(409).send({
-      error: 'An account already exists with this email'
+    return res.status(201).send({
+      message: isUser ? 'Succesfully created user' : 'Succesfully created agent',
+      token
     });
-
   } catch (error) {
-    res.status(500).send({
-      error: 'Something went wrdssong'
-    });
+    next(error);
   }
 }
 
-export async function login(req, res) {
+export async function login(req, res, next) {
   try {
     const { email, password } = req.sanitizedBody;
     const user = await User.findOne({
@@ -55,15 +54,11 @@ export async function login(req, res) {
     });
 
     if (!user) {
-      return res.status(494).send({
-        error: 'Could not find an account registered with this email'
-      });
+      throw new EntryNotFound('Could not find an account registered with this email');
     }
 
     if (!compareSync(password, user.password)) {
-      return res.status(403).send({
-        error: 'Email/Password is incorrect'
-      });
+      throw new AuthenticationError('Email/Password is incorrect');
     }
 
     return res.status(200).send({
@@ -75,8 +70,6 @@ export async function login(req, res) {
     });
 
   } catch (error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }

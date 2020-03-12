@@ -20,7 +20,3 @@ export function generateHashPassword(password) {
 export function compareSync(password, userPassword) {
   return bcrypt.compareSync(password, userPassword);
 }
-
-module.exports = {
-  generateHashPassword
-}

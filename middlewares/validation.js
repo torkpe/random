@@ -11,6 +11,7 @@ import {
   ticketDetails,
   commentDetails
 } from '../utils/constants';
+import { BadRequestError } from '../utils/errors';
 
 import {
   generateHashPassword
@@ -26,17 +27,13 @@ export function createUser(req, res, next) {
     const { isValid, sanitizedBody } = validateRequestBody(requestBody);
 
     if (!isValid) {
-      return res.status(400).send({
-        error: 'All fields are required'
-      });
+      throw new BadRequestError('All fields are required');
     }
 
     const { email } = sanitizedBody;
 
     if (!validateEmail(email)) {
-      return res.status(400).send({
-        error: 'Email is not valid'
-      });
+      throw new BadRequestError('Email is not valid');
     }
 
     sanitizedBody.type = createUserType(req.baseUrl);
@@ -45,9 +42,7 @@ export function createUser(req, res, next) {
 
     next();
   } catch(error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }
 
@@ -72,26 +67,20 @@ export function login(req, res, next) {
     const { isValid, sanitizedBody } = validateRequestBody(requestBody);
 
     if (!isValid) {
-      return res.status(400).send({
-        error: 'All fields are required'
-      });
+      throw new BadRequestError('All fields are required');
     }
 
     const { email } = sanitizedBody;
 
     if (!validateEmail(email)) {
-      return res.status(400).send({
-        error: 'Email is not valid'
-      });
+      throw new BadRequestError('Email is not valid');
     }
 
     req.sanitizedBody = sanitizedBody;
 
     next();
   } catch(error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }
 
@@ -105,9 +94,7 @@ export function createTicket(req, res, next) {
     const { isValid, sanitizedBody } = validateRequestBody(requestBody);
 
     if (!isValid) {
-      return res.status(400).send({
-        error: 'All fields are required'
-      });
+      throw new BadRequestError('All fields are required');
     }
 
     sanitizedBody.createdBy = req.user.id;
@@ -116,9 +103,7 @@ export function createTicket(req, res, next) {
 
     next();
   } catch(error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }
 
@@ -132,9 +117,7 @@ export function createComment(req, res, next) {
     const { isValid, sanitizedBody } = validateRequestBody(requestBody);
 
     if (!isValid) {
-      return res.status(400).send({
-        error: 'All fields are required'
-      });
+      throw new BadRequestError('All fields are required');
     }
 
     sanitizedBody.uid = req.user.id;
@@ -144,8 +127,6 @@ export function createComment(req, res, next) {
 
     next();
   } catch(error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }

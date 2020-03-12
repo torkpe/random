@@ -9,9 +9,16 @@ The admin user who is seeded by default is in charge of the following key functi
 * Assigning tickts to agents
 * Viewing reports of all tickets created
 
+PS: By default, the admin login details after seeding are
+```
+{
+    "email": "admin@email.com',
+    "password": "adminPass",
+}
+```
 ### User
 
-The user has th following key functions
+The user has the following key functions
 * Create tickets
 * View status of tickets
 * Add comments to tickets
@@ -46,11 +53,12 @@ TEST_DB=`Name of your test database`
 SECRET_KEY=`Any group of random keys`
 PORT=`Your desired port number`
 ```
+* Run the command `yarn run migrate`
 * Run the command `yarn run seed`
 * Run the command `yarn run dev` for development enviroment or `yarn start` for production
 
 ## Endpoints
 All endpoints can be found in the postman collection below
-`https://www.getpostman.com/collections/abd87b045bd6776a78f0`
+https://www.getpostman.com/collections/abd87b045bd6776a78f0
 <p/>
 NB: `baseUrl` example = `127.0.0.1/api/v1`

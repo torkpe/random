@@ -4,7 +4,7 @@ import {
   ticketStatusTypes
 } from '../../utils/constants';
 
-export async function getAssignedTickets(req, res) {
+export async function getAssignedTickets(req, res, next) {
   try {
     const tickets = await Ticket.findAll({
       where: {
@@ -18,13 +18,11 @@ export async function getAssignedTickets(req, res) {
       data: tickets
     });
   } catch (error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }
 
-export async function updateTicketStatus(req, res) {
+export async function updateTicketStatus(req, res, next) {
   try {
 
     const { status } = req.body;
@@ -63,8 +61,6 @@ export async function updateTicketStatus(req, res) {
     });
 
   } catch (error) {
-    res.status(500).send({
-      error: 'Something went wrong'
-    });
+    next(error);
   }
 }

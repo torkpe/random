@@ -7,6 +7,7 @@
     "start": "node -r esm app.js",
     "dev": "nodemon -r esm app.js",
     "seed": "sequelize db:seed:all",
+    "migrate": "sequelize db:migrate migrate",
     "test": "sequelize db:migrate migrate && sequelize db:seed:all && mocha --require esm ./**/**/.test.js --recursive --timeout 10000 && sequelize db:seed:undo:all"
   },
   "dependencies": {
